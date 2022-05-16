@@ -15,4 +15,4 @@
 local.properties
 
 
-app/src/main/java/com/example/newsapp/utils/ApiKey.kt
+/app/src/main/java/com/example/newsapp/utils/ApiKey.kt
