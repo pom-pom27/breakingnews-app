@@ -15,9 +15,9 @@ class BreakingNewsFragment : Fragment(R.layout.breaking_news_fragment) {
         super.onCreate(savedInstanceState)
 
         // This callback will only be called when MyFragment is at least Started.
-        val callback = requireActivity().onBackPressedDispatcher.addCallback(this) {
+        requireActivity().onBackPressedDispatcher.addCallback(this) {
             if (backPressedTime + 3000 > System.currentTimeMillis()) {
-                Log.d("TAG", "onCreate: press 121312312312 more to exit")
+                Log.d("TAG", "onCreate: press one more to exit")
 
                 exitProcess(1)
             } else {

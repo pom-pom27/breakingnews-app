@@ -1,16 +1,15 @@
 package com.example.newsapp.ui
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.newsapp.R
 import com.example.newsapp.databinding.ActivityMainBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-
-    var backPressedTime: Long = 0
 
     private lateinit var binding: ActivityMainBinding
 
@@ -34,17 +33,4 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onBackPressed() {
-
-
-
-        if (isTaskRoot) {
-
-
-        } else {
-            super.onBackPressed()
-
-        }
-
-    }
 }
