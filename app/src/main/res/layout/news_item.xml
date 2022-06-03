@@ -4,16 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="145dp"
-    android:padding="8dp">
-
-    <!--    TODO: Add contentDescription programmatically-->
+    android:paddingHorizontal="10dp">
 
     <ImageView
         android:id="@+id/ivNews"
         android:layout_width="140dp"
         android:layout_height="130dp"
+        android:contentDescription="News image"
         android:scaleType="centerCrop"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_description"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/tv_title"
         tools:srcCompat="@tools:sample/avatars" />
@@ -59,13 +58,13 @@
         android:id="@+id/tv_description"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="10dp"
         android:ellipsize="end"
         android:maxLines="4"
         android:textColor="@android:color/darker_gray"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/tv_source"
-        app:layout_constraintTop_toBottomOf="@+id/tv_source"
+        app:layout_constraintTop_toBottomOf="@+id/tv_publish_date"
         tools:text="Murray Kessler, the CEO of baby formula producer Perrigo, said that he expects the shortages to last the rest of this year, despite Biden saying he hopes it will be resolved within weeks." />
 </androidx.constraintlayout.widget.ConstraintLayout>

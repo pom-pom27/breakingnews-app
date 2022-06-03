@@ -1,7 +1,12 @@
 package com.example.newsapp.di
 
+import android.app.Application
+import androidx.room.Room
 import com.example.newsapp.BuildConfig
+import com.example.newsapp.data.local.Converters
+import com.example.newsapp.data.local.NewsDatabase
 import com.example.newsapp.data.remote.NewsApi
+import com.example.newsapp.repositories.NewsRepository
 import com.example.newsapp.utils.Constants.Companion.BASE_URL
 import dagger.Module
 import dagger.Provides
@@ -42,4 +47,16 @@ object AppModule {
             .build()
             .create(NewsApi::class.java)
     }
+
+    @Provides
+    @Singleton
+    fun provideRoomDb(app: Application): NewsDatabase = Room.databaseBuilder(
+        app, NewsDatabase::class.java, "news_db"
+    ).addTypeConverter(Converters())
+        .build()
+
+    @Provides
+    @Singleton
+    fun provideNewsRepository(api: NewsApi, db: NewsDatabase): NewsRepository =
+        NewsRepository(api, db.articleDao)
 }
