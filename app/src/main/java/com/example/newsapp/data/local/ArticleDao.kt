@@ -13,6 +13,8 @@ interface ArticleDao {
     @Delete
     suspend fun deleteArticle(articleEntity: ArticleEntity)
 
-    @Query("SELECT * FROM articles")
+    @Query("SELECT * FROM articles ORDER BY id DESC")
     fun getAllArticle(): LiveData<List<ArticleEntity>>
 }
+
+//TODO: add caching breakingNews and searchNews articles

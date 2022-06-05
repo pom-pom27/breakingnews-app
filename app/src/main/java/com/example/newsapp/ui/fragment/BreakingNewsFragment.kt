@@ -5,12 +5,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AbsListView
 import androidx.activity.addCallback
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.newsapp.R
 import com.example.newsapp.databinding.BreakingNewsFragmentBinding
 import com.example.newsapp.ui.adapters.NewsAdapter
@@ -41,6 +43,11 @@ class BreakingNewsFragment : Fragment(R.layout.breaking_news_fragment) {
         savedInstanceState: Bundle?
     ): View {
         _binding = BreakingNewsFragmentBinding.inflate(inflater, container, false)
+
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setupRecycleView()
         subscribeToObserver()
 
@@ -56,7 +63,41 @@ class BreakingNewsFragment : Fragment(R.layout.breaking_news_fragment) {
         }
 
         addDoubleBackToExit()
-        return binding.root
+    }
+
+    var isLoading = false
+    var isLastPage = false
+    var isScrolling = false
+
+    private val scrollListener = object : RecyclerView.OnScrollListener() {
+        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+            super.onScrollStateChanged(recyclerView, newState)
+            if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+                isScrolling = true
+            }
+
+        }
+
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            super.onScrolled(recyclerView, dx, dy)
+
+            val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+            val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+            val visibleItemCount = layoutManager.childCount
+            val totalItemCount = layoutManager.itemCount
+
+            val isNotLoadingAndNotLastPage = !isLastPage && !isLastPage
+            val isAtLastItem = firstVisibleItemPosition + visibleItemCount >= totalItemCount
+            val isNotAtBeginning = firstVisibleItemPosition >= 0
+            val isTotalMoreThanVisible = totalItemCount >= 20
+            val shouldPaginate =
+                isNotLoadingAndNotLastPage && isAtLastItem && isNotAtBeginning && isTotalMoreThanVisible && isScrolling
+
+            if (shouldPaginate) {
+                newsViewModel.getBreakingNews("id")
+                isScrolling = false
+            }
+        }
     }
 
     override fun onDestroyView() {
@@ -79,7 +120,12 @@ class BreakingNewsFragment : Fragment(R.layout.breaking_news_fragment) {
                 is Resource.Success -> {
                     hideProgressbar()
                     response.data?.let { newsResponse ->
-                        newsAdapter.differ.submitList(newsResponse.articles)
+                        newsAdapter.differ.submitList(newsResponse.articles.toList())
+                        val totalPages = newsResponse.totalResults / 20 + 2
+                        isLastPage = newsViewModel.breakingPageNumber == totalPages
+                        if (isLastPage) {
+                            binding.rvNews.setPadding(0, 0, 0, 0)
+                        }
                     }
                 }
             }
@@ -89,10 +135,12 @@ class BreakingNewsFragment : Fragment(R.layout.breaking_news_fragment) {
 
     private fun hideProgressbar() {
         binding.paginationProgressBar.isVisible = false
+        isLoading = false
     }
 
     private fun showProgressbar() {
         binding.paginationProgressBar.isVisible = true
+        isLoading = true
     }
 
     private fun setupRecycleView() {
@@ -102,6 +150,7 @@ class BreakingNewsFragment : Fragment(R.layout.breaking_news_fragment) {
 
             adapter = newsAdapter
             layoutManager = LinearLayoutManager(activity)
+            addOnScrollListener(this@BreakingNewsFragment.scrollListener)
         }
     }
 

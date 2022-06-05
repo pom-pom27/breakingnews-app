@@ -7,3 +7,4 @@ import dagger.hilt.android.HiltAndroidApp
 class NewsApp : Application()
 
 //TODO: convert to flow
+//TODO: bug: can saved identical article in saved database
